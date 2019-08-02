@@ -1,2 +1,2 @@
 # Burger Store Api
-[![CircleCI](https://circleci.com/gh/andreassisbaroni/spotify.store.api.svg?style=shield)](https://circleci.com/gh/andreassisbaroni/spotify.store.api)
+[![CircleCI](https://circleci.com/gh/andreassisbaroni/burguer.store.api.svg?style=shield)](https://circleci.com/gh/andreassisbaroni/burguer.store.api)
