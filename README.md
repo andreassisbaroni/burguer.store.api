@@ -1,2 +1,2 @@
 # Burger Store Api
-[![CircleCI](https://circleci.com/gh/andreassisbaroni/burguer.store.api.svg?style=shield)](https://circleci.com/gh/andreassisbaroni/burguer.store.api)
+[![CircleCI](https://circleci.com/gh/andreassisbaroni/burger.store.api.svg?style=shield)](https://circleci.com/gh/andreassisbaroni/burger.store.api)
