@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="createTableIngredient" author="andre.baroni">
+        <createTable tableName="ingredient">
+            <column name="id" type="uuid">
+                <constraints nullable="false"
+                             primaryKey="true"
+                             primaryKeyName="pk_ingredient"/>
+            </column>
+            <column name="description" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price" type="number(15,2)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="insertBasicIngredient" author="andre.baroni">
+        <insert tableName="ingredient">
+            <column name="id" value="045ee2a7-6d0e-477a-a5db-91840d3c6e34"/>
+            <column name="description" value="Alface"/>
+            <column name="price" value="0.40"/>
+        </insert>
+        <insert tableName="ingredient">
+            <column name="id" value="acc4bef6-fc6d-401a-b10d-6428d86a9b29"/>
+            <column name="description" value="Bacon"/>
+            <column name="price" value="2.00"/>
+        </insert>
+        <insert tableName="ingredient">
+            <column name="id" value="6fedc320-199c-4261-9903-fce173998b53"/>
+            <column name="description" value="Hambúrguer de Carne"/>
+            <column name="price" value="3.00"/>
+        </insert>
+        <insert tableName="ingredient">
+            <column name="id" value="81c06f12-8ac7-4fae-8402-607e5606b528"/>
+            <column name="description" value="Ovo"/>
+            <column name="price" value="0.80"/>
+        </insert>
+        <insert tableName="ingredient">
+            <column name="id" value="53286016-c39d-48b7-8cc2-9e3f0dbff41b"/>
+            <column name="description" value="Queijo"/>
+            <column name="price" value="1.50"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="createTableBurger" author="andre.baroni">
+        <createTable tableName="burger">
+            <column name="id" type="uuid">
+                <constraints nullable="false"
+                             primaryKey="true"
+                             primaryKeyName="pk_burger"/>
+            </column>
+            <column name="description" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price" type="number(15,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="menu_burger" type="boolean" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="insertBasicBurger" author="andre.baroni">
+        <insert tableName="burger">
+            <column name="id" value="27e3fa41-b38e-433f-878c-b379f29bdaef"/>
+            <column name="description" value="X-Bacon"/>
+            <column name="price" value="6.50"/>
+            <column name="menu_burger" value="true"/>
+        </insert>
+        <insert tableName="burger">
+            <column name="id" value="b1a45811-8680-4f5a-a833-328cfeba1d81"/>
+            <column name="description" value="X-Burger"/>
+            <column name="price" value="4.50"/>
+            <column name="menu_burger" value="true"/>
+        </insert>
+        <insert tableName="burger">
+            <column name="id" value="1ecdb5b7-c309-4a08-9940-4a846723031b"/>
+            <column name="description" value="X-Egg"/>
+            <column name="price" value="5.30"/>
+            <column name="menu_burger" value="true"/>
+        </insert>
+        <insert tableName="burger">
+            <column name="id" value="6800f63f-ab2b-4218-b1f0-467dfeb4aba7"/>
+            <column name="description" value="X-Egg Bacon"/>
+            <column name="price" value="7.30"/>
+            <column name="menu_burger" value="true"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="createTableBurgerIngredient" author="andre.baroni">
+        <createTable tableName="burger_ingredient">
+            <column name="fk_ingredient" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="fk_burger" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="amount" type="int">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey tableName="burger_ingredient" columnNames="fk_ingredient, fk_burger"
+                       constraintName="pk_burgeringredient"/>
+
+        <addForeignKeyConstraint baseTableName="burger_ingredient" baseColumnNames="fk_ingredient"
+                                 constraintName="fk_burgeringredient_ingredient" referencedTableName="ingredient"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="burger_ingredient" baseColumnNames="fk_burger"
+                                 constraintName="fk_burgeringredient_burger" referencedTableName="burger"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="includeIngredientsToBurgerXBacon" author="andre.baroni">
+        <insert tableName="burger_ingredient">
+            <column name="fk_burger" value="27e3fa41-b38e-433f-878c-b379f29bdaef"/>
+            <column name="fk_ingredient" value="acc4bef6-fc6d-401a-b10d-6428d86a9b29"/>
+            <column name="amount" value="1"/>
+        </insert>
+        <insert tableName="burger_ingredient">
+            <column name="fk_burger" value="27e3fa41-b38e-433f-878c-b379f29bdaef"/>
+            <column name="fk_ingredient" value="6fedc320-199c-4261-9903-fce173998b53"/>
+            <column name="amount" value="1"/>
+        </insert>
+        <insert tableName="burger_ingredient">
+            <column name="fk_burger" value="27e3fa41-b38e-433f-878c-b379f29bdaef"/>
+            <column name="fk_ingredient" value="53286016-c39d-48b7-8cc2-9e3f0dbff41b"/>
+            <column name="amount" value="1"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="includeIngredientsToBurgerXBurger" author="andre.baroni">
+        <insert tableName="burger_ingredient">
+            <column name="fk_burger" value="b1a45811-8680-4f5a-a833-328cfeba1d81"/>
+            <column name="fk_ingredient" value="6fedc320-199c-4261-9903-fce173998b53"/>
+            <column name="amount" value="1"/>
+        </insert>
+        <insert tableName="burger_ingredient">
+            <column name="fk_burger" value="b1a45811-8680-4f5a-a833-328cfeba1d81"/>
+            <column name="fk_ingredient" value="53286016-c39d-48b7-8cc2-9e3f0dbff41b"/>
+            <column name="amount" value="1"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="includeIngredientsToBurgerXEgg" author="andre.baroni">
+        <insert tableName="burger_ingredient">
+            <column name="fk_burger" value="1ecdb5b7-c309-4a08-9940-4a846723031b"/>
+            <column name="fk_ingredient" value="81c06f12-8ac7-4fae-8402-607e5606b528"/>
+            <column name="amount" value="1"/>
+        </insert>
+        <insert tableName="burger_ingredient">
+            <column name="fk_burger" value="1ecdb5b7-c309-4a08-9940-4a846723031b"/>
+            <column name="fk_ingredient" value="6fedc320-199c-4261-9903-fce173998b53"/>
+            <column name="amount" value="1"/>
+        </insert>
+        <insert tableName="burger_ingredient">
+            <column name="fk_burger" value="1ecdb5b7-c309-4a08-9940-4a846723031b"/>
+            <column name="fk_ingredient" value="53286016-c39d-48b7-8cc2-9e3f0dbff41b"/>
+            <column name="amount" value="1"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="includeIngredientsToBurgerXEggBacon" author="andre.baroni">
+        <insert tableName="burger_ingredient">
+            <column name="fk_burger" value="6800f63f-ab2b-4218-b1f0-467dfeb4aba7"/>
+            <column name="fk_ingredient" value="acc4bef6-fc6d-401a-b10d-6428d86a9b29"/>
+            <column name="amount" value="1"/>
+        </insert>
+        <insert tableName="burger_ingredient">
+            <column name="fk_burger" value="6800f63f-ab2b-4218-b1f0-467dfeb4aba7"/>
+            <column name="fk_ingredient" value="81c06f12-8ac7-4fae-8402-607e5606b528"/>
+            <column name="amount" value="1"/>
+        </insert>
+        <insert tableName="burger_ingredient">
+            <column name="fk_burger" value="6800f63f-ab2b-4218-b1f0-467dfeb4aba7"/>
+            <column name="fk_ingredient" value="6fedc320-199c-4261-9903-fce173998b53"/>
+            <column name="amount" value="1"/>
+        </insert>
+        <insert tableName="burger_ingredient">
+            <column name="fk_burger" value="6800f63f-ab2b-4218-b1f0-467dfeb4aba7"/>
+            <column name="fk_ingredient" value="53286016-c39d-48b7-8cc2-9e3f0dbff41b"/>
+            <column name="amount" value="1"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="createTableSale" author="andre.baroni">
+        <createTable tableName="sale">
+            <column name="id" type="uuid">
+                <constraints nullable="false"
+                             primaryKey="true"
+                             primaryKeyName="pk_sale"/>
+            </column>
+            <column name="sale_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="finish_date" type="timestamp"/>
+            <column name="cancel_date" type="timestamp"/>
+            <column name="price" type="number(15,2)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="createTableSaleItem" author="andre.baroni">
+        <createTable tableName="sale_item">
+            <column name="id" type="uuid">
+                <constraints nullable="false"
+                             primaryKey="true"
+                             primaryKeyName="pk_saleitem"/>
+            </column>
+            <column name="fk_sale" type="uuid">
+                <constraints nullable="false"
+                             foreignKeyName="fk_saleitem_sale"
+                             referencedTableName="sale"
+                             referencedColumnNames="id"/>
+
+            </column>
+            <column name="fk_burger" type="uuid">
+                <constraints nullable="false"
+                             foreignKeyName="fk_saleitem_burger"
+                             referencedTableName="burger"
+                             referencedColumnNames="id"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>
