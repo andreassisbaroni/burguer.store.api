@@ -230,4 +230,73 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="createTableDiscount" author="andre.baroni">
+        <createTable tableName="discount">
+            <column name="id" type="uuid">
+                <constraints nullable="false"
+                             primaryKey="true"
+                             primaryKeyName="pk_discount"/>
+            </column>
+            <column name="description" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="active" type="boolean" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="createTablePortionDiscount" author="andre.baroni">
+        <createTable tableName="portion_discount">
+            <column name="id" type="uuid">
+                <constraints nullable="false"
+                             primaryKey="true"
+                             primaryKeyName="pk_portiondiscount"
+                             foreignKeyName="fk_portiondiscount_discount"
+                             referencedTableName="discount"
+                             referencedColumnNames="id"/>
+            </column>
+            <column name="fk_ingredient" type="uuid">
+                <constraints nullable="false"
+                             foreignKeyName="fk_portiondiscount_ingredient"
+                             referencedTableName="ingredient"
+                             referencedColumnNames="id"/>
+            </column>
+            <column name="amount_requested" type="integer">
+                <constraints nullable="false"/>
+            </column>
+            <column name="amount_discount" type="integer">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="createTableIncludeExcludeDiscount" author="andre.baroni">
+        <createTable tableName="include_exclude_discount">
+            <column name="id" type="uuid">
+                <constraints nullable="false"
+                             primaryKey="true"
+                             primaryKeyName="pk_includeexcludediscount"
+                             foreignKeyName="fk_includeexcludedisc_discount"
+                             referencedTableName="discount"
+                             referencedColumnNames="id"/>
+            </column>
+            <column name="fk_ingredient_required" type="uuid">
+                <constraints nullable="false"
+                             foreignKeyName="fk_required_ingredient"
+                             referencedTableName="ingredient"
+                             referencedColumnNames="id"/>
+            </column>
+            <column name="fk_ingredient_excluded" type="uuid">
+                <constraints nullable="false"
+                             foreignKeyName="fk_excluded_ingredient"
+                             referencedTableName="ingredient"
+                             referencedColumnNames="id"/>
+            </column>
+            <column name="discount_percentage" type="number(6,2)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
 </databaseChangeLog>

@@ -22,6 +22,14 @@ public abstract class Discount implements Serializable {
     @Column
     private String description;
 
+    @Column
+    private Boolean active;
+
+    protected Discount() {
+        super();
+        this.setActive(false);
+    }
+
     public UUID getId() {
         return id;
     }
@@ -36,5 +44,13 @@ public abstract class Discount implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 }
