@@ -4,6 +4,8 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.Objects;
 import java.util.UUID;
 
 @Table
@@ -24,6 +26,9 @@ public abstract class Discount implements Serializable {
 
     @Column
     private Boolean active;
+
+    @ManyToMany(mappedBy = "discounts")
+    private Collection<Burger> burgers;
 
     protected Discount() {
         super();
@@ -52,5 +57,26 @@ public abstract class Discount implements Serializable {
 
     public void setActive(Boolean active) {
         this.active = active;
+    }
+
+    public Collection<Burger> getBurgers() {
+        return burgers;
+    }
+
+    public void setBurgers(Collection<Burger> burgers) {
+        this.burgers = burgers;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Discount)) return false;
+        Discount discount = (Discount) o;
+        return Objects.equals(getId(), discount.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 }

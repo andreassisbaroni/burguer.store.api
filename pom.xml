@@ -10,7 +10,7 @@
     </parent>
     <groupId>br.com.andrebaroni</groupId>
     <artifactId>burger.store.api</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>burger.store.api</name>
     <description>Burger Store API</description>
 
@@ -57,6 +57,7 @@
     </dependencies>
 
     <build>
+        <finalName>burger.store.api</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

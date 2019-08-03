@@ -120,4 +120,17 @@ public class Sale implements Serializable {
             return SaleStatus.PENDING;
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Sale)) return false;
+        Sale sale = (Sale) o;
+        return Objects.equals(getId(), sale.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
+    }
 }

@@ -84,4 +84,17 @@ public class SaleItem implements Serializable {
 
         return 0.0;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SaleItem)) return false;
+        SaleItem saleItem = (SaleItem) o;
+        return Objects.equals(getId(), saleItem.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
+    }
 }

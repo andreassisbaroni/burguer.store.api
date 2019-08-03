@@ -105,6 +105,8 @@
             <column name="amount" type="int">
                 <constraints nullable="false"/>
             </column>
+            <column name="amount_discount" type="int"/>
+            <column name="discount_percentage" type="number(6,2)"/>
         </createTable>
 
         <addPrimaryKey tableName="burger_ingredient" columnNames="fk_ingredient, fk_burger"
@@ -297,6 +299,70 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+    </changeSet>
+
+    <changeSet id="createTableBurgerDiscount" author="andre.baroni">
+        <createTable tableName="burger_discount">
+            <column name="fk_burger" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="fk_discount" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey tableName="burger_discount" columnNames="fk_burger, fk_discount"
+                       constraintName="pk_burger_discount"/>
+
+        <addForeignKeyConstraint baseTableName="burger_discount" baseColumnNames="fk_burger"
+                                 constraintName="fk_burgerdiscount_burger" referencedTableName="burger"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="burger_discount" baseColumnNames="fk_discount"
+                                 constraintName="fk_burgerdiscount_discount" referencedTableName="discount"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="insertBaseDiscounts" author="andre.baroni">
+        <insert tableName="discount">
+            <column name="id" value="846e5a57-ac0b-453f-8e92-efe379b4c77a"/>
+            <column name="description" value="Light"/>
+            <column name="active" value="true"/>
+        </insert>
+        <insert tableName="discount">
+            <column name="id" value="e2cd7cfc-cead-478a-91d8-68865c7d1ad4"/>
+            <column name="description" value="Muita Carne"/>
+            <column name="active" value="true"/>
+        </insert>
+        <insert tableName="discount">
+            <column name="id" value="90814592-702e-4d53-bfcc-75d8856ec60e"/>
+            <column name="description" value="Muito Queijo"/>
+            <column name="active" value="true"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insertBaseIncludeExcludeDiscounts" author="andre.baroni">
+        <insert tableName="include_exclude_discount">
+            <column name="id" value="846e5a57-ac0b-453f-8e92-efe379b4c77a"/>
+            <column name="fk_ingredient_required" value="045ee2a7-6d0e-477a-a5db-91840d3c6e34"/>
+            <column name="fk_ingredient_excluded" value="acc4bef6-fc6d-401a-b10d-6428d86a9b29"/>
+            <column name="discount_percentage" value="10"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insertBasePortionDiscounts" author="andre.baroni">
+        <insert tableName="portion_discount">
+            <column name="id" value="e2cd7cfc-cead-478a-91d8-68865c7d1ad4"/>
+            <column name="fk_ingredient" value="6fedc320-199c-4261-9903-fce173998b53"/>
+            <column name="amount_requested" value="3"/>
+            <column name="amount_discount" value="1"/>
+        </insert>
+        <insert tableName="portion_discount">
+            <column name="id" value="90814592-702e-4d53-bfcc-75d8856ec60e"/>
+            <column name="fk_ingredient" value="53286016-c39d-48b7-8cc2-9e3f0dbff41b"/>
+            <column name="amount_requested" value="3"/>
+            <column name="amount_discount" value="1"/>
+        </insert>
     </changeSet>
 
 </databaseChangeLog>

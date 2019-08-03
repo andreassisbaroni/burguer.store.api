@@ -25,8 +25,16 @@ public class BurgerIngredient implements Serializable {
     @Column
     private Integer amount;
 
+    @Column
+    private Integer amountDiscount;
+
+    @Column
+    private Double discountPercentage;
+
     private BurgerIngredient() {
         super();
+        this.setAmountDiscount(0);
+        this.setDiscountPercentage(0.0);
     }
 
     public BurgerIngredient(Burger burger, Ingredient ingredient, Integer amount) {
@@ -69,6 +77,22 @@ public class BurgerIngredient implements Serializable {
         this.amount = amount;
     }
 
+    public Integer getAmountDiscount() {
+        return amountDiscount;
+    }
+
+    public void setAmountDiscount(Integer amountDiscount) {
+        this.amountDiscount = amountDiscount;
+    }
+
+    public Double getDiscountPercentage() {
+        return discountPercentage;
+    }
+
+    public void setDiscountPercentage(Double discountPercentage) {
+        this.discountPercentage = discountPercentage;
+    }
+
     public String getIngredientDescription() {
         if (Objects.nonNull(this.getIngredient())) {
             return this.getIngredient().getDescription();
@@ -95,8 +119,23 @@ public class BurgerIngredient implements Serializable {
 
     public Double getPrice() {
         if (Objects.nonNull(this.getIngredient())) {
-            return this.getAmount() * this.getIngredient().getPrice();
+            int amountWithDiscount = this.getAmount() - this.getAmountDiscount();
+            Double price = (amountWithDiscount) * this.getIngredient().getPrice();
+            return price - ((price * this.getDiscountPercentage()) / 100);
         }
         return 0.0;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BurgerIngredient)) return false;
+        BurgerIngredient that = (BurgerIngredient) o;
+        return Objects.equals(getPk(), that.getPk());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getPk());
     }
 }

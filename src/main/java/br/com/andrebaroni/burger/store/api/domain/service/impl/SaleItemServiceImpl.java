@@ -4,19 +4,20 @@ import br.com.andrebaroni.burger.store.api.application.command.AddSaleItemComman
 import br.com.andrebaroni.burger.store.api.application.command.CreateSaleItemIngredientCommand;
 import br.com.andrebaroni.burger.store.api.application.query.BurgerIngredientQuery;
 import br.com.andrebaroni.burger.store.api.application.query.SaleItemQuery;
-import br.com.andrebaroni.burger.store.api.domain.entity.Burger;
-import br.com.andrebaroni.burger.store.api.domain.entity.BurgerIngredient;
-import br.com.andrebaroni.burger.store.api.domain.entity.Ingredient;
-import br.com.andrebaroni.burger.store.api.domain.entity.SaleItem;
+import br.com.andrebaroni.burger.store.api.domain.entity.*;
 import br.com.andrebaroni.burger.store.api.domain.service.BurgerIngredientService;
+import br.com.andrebaroni.burger.store.api.domain.service.DiscountService;
 import br.com.andrebaroni.burger.store.api.domain.service.SaleItemService;
-import br.com.andrebaroni.burger.store.api.infra.repository.*;
-import org.omg.SendingContext.RunTime;
+import br.com.andrebaroni.burger.store.api.infra.repository.BurgerRepository;
+import br.com.andrebaroni.burger.store.api.infra.repository.IngredientRepository;
+import br.com.andrebaroni.burger.store.api.infra.repository.SaleItemRepository;
+import br.com.andrebaroni.burger.store.api.infra.repository.SaleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
@@ -33,16 +34,18 @@ public class SaleItemServiceImpl implements SaleItemService {
     private final BurgerRepository burgerRepository;
     private final IngredientRepository ingredientRepository;
     private final BurgerIngredientService burgerIngredientService;
+    private final DiscountService discountService;
 
     @Autowired
     public SaleItemServiceImpl(SaleRepository saleRepository, SaleItemRepository saleItemRepository,
                                BurgerRepository burgerRepository, IngredientRepository ingredientRepository,
-                               BurgerIngredientService burgerIngredientService) {
+                               BurgerIngredientService burgerIngredientService, DiscountService discountService) {
         this.saleRepository = saleRepository;
         this.saleItemRepository = saleItemRepository;
         this.burgerRepository = burgerRepository;
         this.ingredientRepository = ingredientRepository;
         this.burgerIngredientService = burgerIngredientService;
+        this.discountService = discountService;
     }
 
     @Override
@@ -65,7 +68,7 @@ public class SaleItemServiceImpl implements SaleItemService {
 
         this.createRelationshipWithBurgerAndIngredients(burger, addSaleItemCommand.getIngredients());
 
-        burger.calculatePrice();
+        this.applyDiscountsToBurger(burger);
 
         return this.saleItemRepository.save(new SaleItem(
                 this.saleRepository.findById(addSaleItemCommand.getIdSale()).orElseThrow(EntityNotFoundException::new),
@@ -86,7 +89,6 @@ public class SaleItemServiceImpl implements SaleItemService {
         Burger currentBurger = this.burgerRepository.findById(idBurger).orElseThrow(EntityNotFoundException::new);
 
         Burger burger = new Burger(currentBurger.getDescription());
-        burger.calculatePrice();
 
         return this.burgerRepository.save(burger);
     }
@@ -100,5 +102,17 @@ public class SaleItemServiceImpl implements SaleItemService {
                     burger.addIngredient(burgerIngredient);
                 }
         );
+    }
+
+    private void applyDiscountsToBurger(Burger burger) {
+        Collection<Discount> discounts = this.discountService.findAllActive();
+
+        if (!CollectionUtils.isEmpty(discounts)) {
+            discounts.forEach(burger::applyDiscount);
+        }
+
+        burger.getBurgerIngredients().forEach(this.burgerIngredientService::save);
+
+        this.burgerRepository.save(burger);
     }
 }
