@@ -2,6 +2,7 @@ package br.com.andrebaroni.burger.store.api.domain.service.impl;
 
 import br.com.andrebaroni.burger.store.api.application.query.BurgerQuery;
 import br.com.andrebaroni.burger.store.api.domain.entity.Burger;
+import br.com.andrebaroni.burger.store.api.domain.exception.EntityNotFoundException;
 import br.com.andrebaroni.burger.store.api.domain.service.BurgerService;
 import br.com.andrebaroni.burger.store.api.infra.repository.BurgerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class BurgerServiceImpl implements BurgerService {
 
     @Override
     public BurgerQuery findById(UUID id) {
-        Burger burger = this.burgerRepository.findById(id).orElseThrow(RuntimeException::new);
+        Burger burger = this.burgerRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(Burger.class));
         return new BurgerQuery(burger.getId(), burger.getDescription(), burger.getPrice());
     }
 

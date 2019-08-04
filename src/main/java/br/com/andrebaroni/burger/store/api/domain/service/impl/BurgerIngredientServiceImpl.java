@@ -3,6 +3,7 @@ package br.com.andrebaroni.burger.store.api.domain.service.impl;
 import br.com.andrebaroni.burger.store.api.application.query.BurgerIngredientQuery;
 import br.com.andrebaroni.burger.store.api.domain.entity.Burger;
 import br.com.andrebaroni.burger.store.api.domain.entity.BurgerIngredient;
+import br.com.andrebaroni.burger.store.api.domain.exception.EntityNotFoundException;
 import br.com.andrebaroni.burger.store.api.domain.service.BurgerIngredientService;
 import br.com.andrebaroni.burger.store.api.infra.repository.BurgerIngredientRepository;
 import br.com.andrebaroni.burger.store.api.infra.repository.BurgerRepository;
@@ -12,7 +13,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -30,7 +30,7 @@ public class BurgerIngredientServiceImpl implements BurgerIngredientService {
 
     @Override
     public Page<BurgerIngredientQuery> findByBurger(UUID idBurger, Pageable pageable) {
-        Burger burger = this.burgerRepository.findById(idBurger).orElseThrow(EntityNotFoundException::new);
+        Burger burger = this.burgerRepository.findById(idBurger).orElseThrow(() -> new EntityNotFoundException(Burger.class));
 
         return new PageImpl<>(this.burgerIngredientRepository.findByBurgerOrderByBurger(burger, pageable)
                 .getContent()

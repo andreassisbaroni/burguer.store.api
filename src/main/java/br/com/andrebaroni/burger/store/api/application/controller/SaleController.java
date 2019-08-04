@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/api/sales")
@@ -33,5 +34,15 @@ public class SaleController implements Serializable {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SaleQuery> create(@RequestBody CreateSaleCommand createSaleCommand) {
         return new ResponseEntity<>(this.saleService.create(createSaleCommand), HttpStatus.CREATED);
+    }
+
+    @PostMapping(value = "/{id}/conclusion", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<SaleQuery> finishSale(@PathVariable(name = "id") final UUID id) {
+        return new ResponseEntity<>(this.saleService.finishSale(id), HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/{id}/cancellation", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<SaleQuery> cancelSale(@PathVariable(name = "id") final UUID id) {
+        return new ResponseEntity<>(this.saleService.cancelSale(id), HttpStatus.OK);
     }
 }

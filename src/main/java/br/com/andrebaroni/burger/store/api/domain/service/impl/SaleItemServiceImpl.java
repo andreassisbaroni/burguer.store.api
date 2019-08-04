@@ -5,6 +5,7 @@ import br.com.andrebaroni.burger.store.api.application.command.CreateSaleItemIng
 import br.com.andrebaroni.burger.store.api.application.query.BurgerIngredientQuery;
 import br.com.andrebaroni.burger.store.api.application.query.SaleItemQuery;
 import br.com.andrebaroni.burger.store.api.domain.entity.*;
+import br.com.andrebaroni.burger.store.api.domain.exception.EntityNotFoundException;
 import br.com.andrebaroni.burger.store.api.domain.service.BurgerIngredientService;
 import br.com.andrebaroni.burger.store.api.domain.service.DiscountService;
 import br.com.andrebaroni.burger.store.api.domain.service.SaleItemService;
@@ -19,8 +20,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.UUID;
@@ -51,7 +50,7 @@ public class SaleItemServiceImpl implements SaleItemService {
     @Override
     public Page<SaleItemQuery> findBySale(UUID idSale, Pageable pageable) {
         return new PageImpl<>(this.saleItemRepository.findBySaleOrderByIdDesc(
-                this.saleRepository.findById(idSale).orElseThrow(EntityExistsException::new), pageable
+                this.saleRepository.findById(idSale).orElseThrow(() -> new EntityNotFoundException(Sale.class)), pageable
         ).getContent().parallelStream()
                 .map(saleItem -> new SaleItemQuery(idSale,
                         saleItem.getId(),
@@ -71,13 +70,13 @@ public class SaleItemServiceImpl implements SaleItemService {
         this.applyDiscountsToBurger(burger);
 
         return this.saleItemRepository.save(new SaleItem(
-                this.saleRepository.findById(addSaleItemCommand.getIdSale()).orElseThrow(EntityNotFoundException::new),
+                this.saleRepository.findById(addSaleItemCommand.getIdSale()).orElseThrow(() -> new EntityNotFoundException(Sale.class)),
                 burger
         ));
     }
 
     public Page<BurgerIngredientQuery> findIngredientFromItem(UUID idSale, UUID idItem, Pageable pageable) {
-        SaleItem saleItem = this.saleItemRepository.findById(idItem).orElseThrow(EntityNotFoundException::new);
+        SaleItem saleItem = this.saleItemRepository.findById(idItem).orElseThrow(() -> new EntityNotFoundException(SaleItem.class));
         if (!saleItem.getSale().getId().equals(idSale)) {
             throw new RuntimeException();
         }
@@ -86,7 +85,7 @@ public class SaleItemServiceImpl implements SaleItemService {
     }
 
     private Burger createNewBurgerToThisItem(UUID idBurger) {
-        Burger currentBurger = this.burgerRepository.findById(idBurger).orElseThrow(EntityNotFoundException::new);
+        Burger currentBurger = this.burgerRepository.findById(idBurger).orElseThrow(() -> new EntityNotFoundException(Burger.class));
 
         Burger burger = new Burger(currentBurger.getDescription());
 
@@ -96,7 +95,7 @@ public class SaleItemServiceImpl implements SaleItemService {
     private void createRelationshipWithBurgerAndIngredients(Burger burger, Collection<CreateSaleItemIngredientCommand> createSaleItemIngredients) {
         createSaleItemIngredients.forEach(
                 createSaleItemIngredientCommand -> {
-                    Ingredient ingredient = this.ingredientRepository.findById(createSaleItemIngredientCommand.getIdIngredient()).orElseThrow(EntityNotFoundException::new);
+                    Ingredient ingredient = this.ingredientRepository.findById(createSaleItemIngredientCommand.getIdIngredient()).orElseThrow(() -> new EntityNotFoundException(Ingredient.class));
                     BurgerIngredient burgerIngredient = new BurgerIngredient(burger, ingredient, createSaleItemIngredientCommand.getAmount());
                     this.burgerIngredientService.save(burgerIngredient);
                     burger.addIngredient(burgerIngredient);

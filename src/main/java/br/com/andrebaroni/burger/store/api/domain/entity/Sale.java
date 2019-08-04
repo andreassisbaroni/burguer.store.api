@@ -1,5 +1,7 @@
 package br.com.andrebaroni.burger.store.api.domain.entity;
 
+import br.com.andrebaroni.burger.store.api.domain.exception.SaleAlreadyCanceledException;
+import br.com.andrebaroni.burger.store.api.domain.exception.SaleAlreadyConcludedException;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.util.CollectionUtils;
 
@@ -119,6 +121,26 @@ public class Sale implements Serializable {
         } else {
             return SaleStatus.PENDING;
         }
+    }
+
+    public void finish() {
+        if (this.getStatus().equals(SaleStatus.CANCELED)) {
+            throw new SaleAlreadyCanceledException();
+        } else if (this.getStatus().equals(SaleStatus.CONPLETED)) {
+            throw new SaleAlreadyConcludedException();
+        }
+
+        this.setFinishDate(LocalDateTime.now());
+    }
+
+    public void cancel() {
+        if (this.getStatus().equals(SaleStatus.CANCELED)) {
+            throw new SaleAlreadyCanceledException();
+        } else if (this.getStatus().equals(SaleStatus.CONPLETED)) {
+            throw new SaleAlreadyConcludedException();
+        }
+
+        this.setCancelDate(LocalDateTime.now());
     }
 
     @Override

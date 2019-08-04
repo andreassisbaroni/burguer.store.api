@@ -4,6 +4,7 @@ import br.com.andrebaroni.burger.store.api.application.command.AddSaleItemComman
 import br.com.andrebaroni.burger.store.api.application.command.CreateSaleCommand;
 import br.com.andrebaroni.burger.store.api.application.query.SaleQuery;
 import br.com.andrebaroni.burger.store.api.domain.entity.Sale;
+import br.com.andrebaroni.burger.store.api.domain.exception.EntityNotFoundException;
 import br.com.andrebaroni.burger.store.api.domain.service.SaleItemService;
 import br.com.andrebaroni.burger.store.api.domain.service.SaleService;
 import br.com.andrebaroni.burger.store.api.infra.repository.SaleRepository;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.transaction.Transactional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -61,4 +63,23 @@ public class SaleServiceImpl implements SaleService {
 
         return new SaleQuery(sale.getId(), sale.getSaleDate(), sale.getFinishDate(), sale.getCancelDate(), sale.getStatus(), sale.getPrice());
     }
+
+    public SaleQuery finishSale(UUID id) {
+        Sale sale = this.saleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(Sale.class));
+
+        sale.finish();
+        this.saleRepository.save(sale);
+
+        return new SaleQuery(sale.getId(), sale.getSaleDate(), sale.getFinishDate(), sale.getCancelDate(), sale.getStatus(), sale.getPrice());
+    }
+
+    public SaleQuery cancelSale(UUID id) {
+        Sale sale = this.saleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(Sale.class));
+
+        sale.cancel();
+        this.saleRepository.save(sale);
+
+        return new SaleQuery(sale.getId(), sale.getSaleDate(), sale.getFinishDate(), sale.getCancelDate(), sale.getStatus(), sale.getPrice());
+    }
+
 }
