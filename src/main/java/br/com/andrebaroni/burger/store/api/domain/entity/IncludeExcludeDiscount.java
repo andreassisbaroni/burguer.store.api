@@ -21,8 +21,23 @@ public class IncludeExcludeDiscount extends Discount {
         super();
     }
 
-    public IncludeExcludeDiscount(Ingredient ingredientRequired, Ingredient ingredientExcluded, Double discountPercentage) {
-        this();
+    private IncludeExcludeDiscount(String description) {
+        super(description);
+    }
+
+    private IncludeExcludeDiscount(String description, boolean active) {
+        super(description, active);
+    }
+
+    public IncludeExcludeDiscount(String description, Ingredient ingredientRequired, Ingredient ingredientExcluded, Double discountPercentage) {
+        this(description);
+        this.setIngredientRequired(ingredientRequired);
+        this.setIngredientExcluded(ingredientExcluded);
+        this.setDiscountPercentage(discountPercentage);
+    }
+
+    public IncludeExcludeDiscount(String description, boolean active, Ingredient ingredientRequired, Ingredient ingredientExcluded, Double discountPercentage) {
+        this(description, active);
         this.setIngredientRequired(ingredientRequired);
         this.setIngredientExcluded(ingredientExcluded);
         this.setDiscountPercentage(discountPercentage);
@@ -50,5 +65,15 @@ public class IncludeExcludeDiscount extends Discount {
 
     public void setDiscountPercentage(Double discountPercentage) {
         this.discountPercentage = discountPercentage;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }

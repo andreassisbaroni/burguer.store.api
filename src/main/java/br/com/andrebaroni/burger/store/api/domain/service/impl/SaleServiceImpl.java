@@ -58,7 +58,6 @@ public class SaleServiceImpl implements SaleService {
             ).collect(Collectors.toList()));
         }
 
-        sale.calculatePrice();
         this.saleRepository.save(sale);
 
         return new SaleQuery(sale.getId(), sale.getSaleDate(), sale.getFinishDate(), sale.getCancelDate(), sale.getStatus(), sale.getPrice());

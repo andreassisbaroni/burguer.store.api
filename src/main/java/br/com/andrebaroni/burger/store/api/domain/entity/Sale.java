@@ -84,6 +84,7 @@ public class Sale implements Serializable {
     }
 
     public Double getPrice() {
+        this.calculatePrice();
         return price;
     }
 
@@ -105,6 +106,16 @@ public class Sale implements Serializable {
         }
 
         this.getSaleItems().add(saleItem);
+        this.calculatePrice();
+    }
+
+    public void addBurger(Burger burger) {
+        if (Objects.isNull(this.getSaleItems())) {
+            this.setSaleItems(new ArrayList<>());
+        }
+
+        this.getSaleItems().add(new SaleItem(this, burger));
+        this.calculatePrice();
     }
 
     public void calculatePrice() {

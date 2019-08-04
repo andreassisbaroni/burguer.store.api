@@ -118,12 +118,17 @@ public class BurgerIngredient implements Serializable {
     }
 
     public Double getPrice() {
+        double finalPrice = 0.0;
+
         if (Objects.nonNull(this.getIngredient())) {
-            int amountWithDiscount = this.getAmount() - this.getAmountDiscount();
-            Double price = (amountWithDiscount) * this.getIngredient().getPrice();
-            return price - ((price * this.getDiscountPercentage()) / 100);
+            finalPrice += this.getAmount() * this.getIngredient().getPrice();
+
+            if (Objects.nonNull(this.getAmountDiscount())) {
+                finalPrice -= this.getAmountDiscount() * this.getIngredient().getPrice();
+            }
         }
-        return 0.0;
+
+        return finalPrice;
     }
 
     @Override

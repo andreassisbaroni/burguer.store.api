@@ -84,6 +84,7 @@ public class Burger implements Serializable {
     }
 
     public Double getPrice() {
+        this.calculatePrice();
         return price;
     }
 
@@ -124,24 +125,43 @@ public class Burger implements Serializable {
     }
 
     public void addIngredient(BurgerIngredient burgerIngredient) {
+        this.addIngredient(burgerIngredient.getIngredient(), burgerIngredient.getAmount());
+    }
+
+    public void addIngredient(Ingredient ingredient, int amount) {
         if (Objects.isNull(this.getBurgerIngredients())) {
             this.setBurgerIngredients(new ArrayList<>());
         }
 
-        this.getBurgerIngredients().add(burgerIngredient);
+        Optional<BurgerIngredient> optionalBurgerIngredient = this.getBurgerIngredients().parallelStream()
+                .filter(burgerIngredient -> burgerIngredient.getIdIngredient().equals(ingredient.getId())).findFirst();
+
+        if (optionalBurgerIngredient.isPresent()) {
+            BurgerIngredient burgerIngredient = optionalBurgerIngredient.get();
+            burgerIngredient.setAmount(burgerIngredient.getAmount() + amount);
+            this.updateIngredient(burgerIngredient);
+        } else {
+            this.getBurgerIngredients().add(new BurgerIngredient(this, ingredient, amount));
+        }
+
         this.calculatePrice();
     }
 
     public void calculatePrice() {
+        double finalPrice = 0.0;
         if (!CollectionUtils.isEmpty(this.getBurgerIngredients())) {
-            this.setPrice(this.getBurgerIngredients().parallelStream().mapToDouble(BurgerIngredient::getPrice).sum());
-        } else {
-            this.setPrice(0.0);
+            finalPrice = this.getBurgerIngredients().parallelStream().mapToDouble(BurgerIngredient::getPrice).sum();
+
+            double totalPercentageDiscount = this.getBurgerIngredients().parallelStream().mapToDouble(BurgerIngredient::getDiscountPercentage).sum();
+
+            finalPrice -= (finalPrice * totalPercentageDiscount) / 100;
         }
+
+        this.setPrice(finalPrice);
     }
 
     public void applyDiscount(Discount discount) {
-        if (discount.getActive()) {
+        if (Objects.nonNull(discount) && discount.getActive()) {
             if (discount instanceof IncludeExcludeDiscount) {
                 this.applyIncludeExcludeDiscount((IncludeExcludeDiscount) discount);
             } else if (discount instanceof PortionDiscount) {
@@ -157,7 +177,7 @@ public class Burger implements Serializable {
                     .parallelStream()
                     .filter(burgerIngredient ->
                             burgerIngredient.getIngredient().equals(portionDiscount.getIngredient()) &&
-                                    burgerIngredient.getAmount().equals(portionDiscount.getAmountRequested())
+                                    burgerIngredient.getAmount() >= portionDiscount.getAmountRequested()
                     ).findFirst();
 
             if (optionalBurgerIngredient.isPresent()) {

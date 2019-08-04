@@ -20,8 +20,24 @@ public class PortionDiscount extends Discount {
         super();
     }
 
-    public PortionDiscount(Ingredient ingredient, Integer amountRequested, Integer amountDiscount) {
-        this();
+    private PortionDiscount(String description) {
+        super(description);
+    }
+
+    private PortionDiscount(String description, boolean active) {
+        super(description, active);
+    }
+
+    public PortionDiscount(String description, Ingredient ingredient, Integer amountRequested, Integer amountDiscount) {
+        this(description);
+        this.setIngredient(ingredient);
+        this.setAmountRequested(amountRequested);
+        this.setAmountDiscount(amountDiscount);
+    }
+
+    public PortionDiscount(String description, boolean active, Ingredient ingredient, Integer amountRequested,
+                           Integer amountDiscount) {
+        this(description, active);
         this.setIngredient(ingredient);
         this.setAmountRequested(amountRequested);
         this.setAmountDiscount(amountDiscount);
@@ -49,5 +65,15 @@ public class PortionDiscount extends Discount {
 
     public void setAmountDiscount(Integer amountDiscount) {
         this.amountDiscount = amountDiscount;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }

@@ -35,6 +35,17 @@ public abstract class Discount implements Serializable {
         this.setActive(false);
     }
 
+    Discount(String description) {
+        this();
+        this.setDescription(description);
+    }
+
+    Discount(String description, boolean active) {
+        this();
+        this.setDescription(description);
+        this.setActive(active);
+    }
+
     public UUID getId() {
         return id;
     }
