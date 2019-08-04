@@ -27,8 +27,8 @@ public class DiscountServiceImpl implements DiscountService {
     public Collection<Discount> findAllActive() {
         Collection<Discount> discounts = new ArrayList<>();
 
-        discounts.addAll(this.includeExcludeDiscountRepository.findByActiveOrderById(Boolean.TRUE));
         discounts.addAll(this.portionDiscountRepository.findByActiveOrderById(Boolean.TRUE));
+        discounts.addAll(this.includeExcludeDiscountRepository.findByActiveOrderById(Boolean.TRUE));
 
         return discounts;
     }

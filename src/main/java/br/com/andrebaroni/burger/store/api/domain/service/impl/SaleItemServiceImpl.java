@@ -78,7 +78,7 @@ public class SaleItemServiceImpl implements SaleItemService {
     public Page<BurgerIngredientQuery> findIngredientFromItem(UUID idSale, UUID idItem, Pageable pageable) {
         SaleItem saleItem = this.saleItemRepository.findById(idItem).orElseThrow(() -> new EntityNotFoundException(SaleItem.class));
         if (!saleItem.getSale().getId().equals(idSale)) {
-            throw new RuntimeException();
+            throw new EntityNotFoundException(SaleItem.class);
         }
 
         return this.burgerIngredientService.findByBurger(saleItem.getIdBurger(), pageable);
