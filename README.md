@@ -20,3 +20,8 @@ This project can be run by the docker image, but is not yet published, so you wi
 #### Run with maven
  - Build project with command `mvnw clean install`.
  - Run app with command `java -jar /target/burger.store.api.jar`.
+
+
+#### API Documentation
+
+To read the API documentation, with the application started, you can access the url `http://{address}/swagger-ui.html`.
